@@ -1,6 +1,11 @@
 package optional
 
-import "errors"
+import (
+	"database/sql"
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+)
 
 type Optional[T any] struct {
 	value T
@@ -36,20 +41,76 @@ func Omitzero[T comparable](v T) Optional[T] {
 	return Value(v)
 }
 
-func (o Optional[T]) Value() (T, bool) {
+func (o Optional[T]) Get() (T, bool) {
 	return o.value, o.ok
+}
+
+var ErrOptionalValueIsEmpty = errors.New("optional value is empty")
+
+func (o Optional[T]) MustGet() T {
+	if o.ok {
+		return o.value
+	}
+
+	panic(ErrOptionalValueIsEmpty)
 }
 
 func (o Optional[T]) IsEmpty() bool {
 	return !o.ok
 }
 
-var ErrOptionalValueIsEmpty = errors.New("optional value is empty")
+func (o Optional[T]) sqlNull() sql.Null[T] {
+	return sql.Null[T]{
+		V:     o.value,
+		Valid: o.ok,
+	}
+}
 
-func (o Optional[T]) MustValue() T {
-	if o.ok {
-		return o.value
+func (o Optional[T]) Value() (driver.Value, error) {
+	sqlNull := o.sqlNull()
+
+	return sqlNull.Value()
+}
+
+func (o *Optional[T]) Scan(src any) error {
+	sqlNull := sql.Null[T]{}
+
+	err := sqlNull.Scan(src)
+	if err != nil {
+		return err
 	}
 
-	panic(ErrOptionalValueIsEmpty)
+	o.value = sqlNull.V
+	o.ok = sqlNull.Valid
+
+	return nil
+}
+
+var jsonNull = [4]byte{'n', 'u', 'l', 'l'}
+
+func (o Optional[T]) MarshalJSON() ([]byte, error) {
+	if o.IsEmpty() {
+		return []byte{'n', 'u', 'l', 'l'}, nil
+	}
+
+	return json.Marshal(o.value)
+}
+
+func (o *Optional[T]) UnmarshalJSON(data []byte) error {
+	if len(data) == 4 && [4]byte(data) == [4]byte{'n', 'u', 'l', 'l'} {
+		*o = Empty[T]()
+
+		return nil
+	}
+
+	var v T
+
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+
+	*o = Value(v)
+
+	return nil
 }

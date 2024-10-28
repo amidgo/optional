@@ -31,7 +31,7 @@ func Pointer[T any](p *T) Optional[T] {
 	return Value(*p)
 }
 
-func Omitzero[T comparable](v T) Optional[T] {
+func OmitZero[T comparable](v T) Optional[T] {
 	var empty T
 
 	if v == empty {

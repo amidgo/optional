@@ -59,6 +59,14 @@ func (o Optional[T]) IsEmpty() bool {
 	return !o.ok
 }
 
+func (o Optional[T]) Pointer() *T {
+	if o.ok {
+		return &o.value
+	}
+
+	return nil
+}
+
 func (o Optional[T]) sqlNull() sql.Null[T] {
 	return sql.Null[T]{
 		V:     o.value,

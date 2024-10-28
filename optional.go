@@ -96,7 +96,7 @@ var jsonNull = [4]byte{'n', 'u', 'l', 'l'}
 
 func (o Optional[T]) MarshalJSON() ([]byte, error) {
 	if o.IsEmpty() {
-		return []byte{'n', 'u', 'l', 'l'}, nil
+		return jsonNull[:], nil
 	}
 
 	return json.Marshal(o.value)

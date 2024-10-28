@@ -75,9 +75,7 @@ func (o Optional[T]) sqlNull() sql.Null[T] {
 }
 
 func (o Optional[T]) Value() (driver.Value, error) {
-	sqlNull := o.sqlNull()
-
-	return sqlNull.Value()
+	return o.sqlNull().Value()
 }
 
 func (o *Optional[T]) Scan(src any) error {

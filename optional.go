@@ -61,7 +61,9 @@ func (o Optional[T]) IsEmpty() bool {
 
 func (o Optional[T]) Pointer() *T {
 	if o.ok {
-		return &o.value
+		value := o.value
+
+		return &value
 	}
 
 	return nil
@@ -103,7 +105,7 @@ func (o Optional[T]) MarshalJSON() ([]byte, error) {
 }
 
 func (o *Optional[T]) UnmarshalJSON(data []byte) error {
-	if len(data) == 4 && [4]byte(data) == [4]byte{'n', 'u', 'l', 'l'} {
+	if len(data) == 4 && [4]byte(data) == jsonNull {
 		*o = Empty[T]()
 
 		return nil

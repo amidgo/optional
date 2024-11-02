@@ -117,6 +117,24 @@ func Test_Optional_Empty_Scan(t *testing.T) {
 	if !ok {
 		t.Fatalf("scan not affected optional")
 	}
+
+	emptyOptional = optional.Empty[int]()
+
+	err = emptyOptional.Scan("Hello World!")
+
+	if err == nil {
+		t.Fatalf("scan from string to int, expected error but got nil")
+	}
+
+	value, ok = emptyOptional.Get()
+
+	if ok {
+		t.Fatal("scan change emptyOptional")
+	}
+
+	if value != 0 {
+		t.Fatalf("scan change emptyOptional value, %d", value)
+	}
 }
 
 func Test_Optional_Value_Scan(t *testing.T) {
@@ -138,6 +156,24 @@ func Test_Optional_Value_Scan(t *testing.T) {
 
 	if !ok {
 		t.Fatalf("scan not affected optional")
+	}
+
+	valueOptional = optional.Comparable(1010)
+
+	err = valueOptional.Scan("Hello World!")
+
+	if err == nil {
+		t.Fatalf("scan from string to int, expected error but got nil")
+	}
+
+	value, ok = valueOptional.Get()
+
+	if !ok {
+		t.Fatal("err scan clear value optional")
+	}
+
+	if value != 1010 {
+		t.Fatalf("err scan clear previous value from value optional, %d", value)
 	}
 }
 

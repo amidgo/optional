@@ -72,6 +72,10 @@ func (o Optional[T]) IsEmpty() bool {
 	return !o.ok
 }
 
+func (o Optional[T]) IsZero() bool {
+	return !o.ok
+}
+
 func (o Optional[T]) sqlNull() sql.Null[T] {
 	return sql.Null[T]{
 		V:     o.value,

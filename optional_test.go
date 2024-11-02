@@ -1,6 +1,7 @@
 package optional_test
 
 import (
+	"encoding/json"
 	"slices"
 	"testing"
 
@@ -146,11 +147,11 @@ func Test_Optional_MarshalJSON(t *testing.T) {
 	data, err := emptyOptional.MarshalJSON()
 
 	if err != nil {
-		t.Fatalf("empty optional MarshalJSON() err not nil, %s", err)
+		t.Fatalf("empty optional MarshalJSON err not nil, %s", err)
 	}
 
 	if !slices.Equal(data, []byte{'n', 'u', 'l', 'l'}) {
-		t.Fatalf("empty optional MarshalJSON() wrong data, %s", string(data))
+		t.Fatalf("empty optional MarshalJSON wrong data, %s", string(data))
 	}
 
 	valueOptional := optional.Comparable(100)
@@ -158,7 +159,7 @@ func Test_Optional_MarshalJSON(t *testing.T) {
 	data, err = valueOptional.MarshalJSON()
 
 	if err != nil {
-		t.Fatalf("value optional MarshalJSON() err not nil, %s", err)
+		t.Fatalf("value optional MarshalJSON err not nil, %s", err)
 	}
 
 	if !slices.Equal(data, []byte{'1', '0', '0'}) {
@@ -172,17 +173,17 @@ func Test_Optional_UnmarshalJSON(t *testing.T) {
 	err := emptyOptional.UnmarshalJSON([]byte{'1'})
 
 	if err != nil {
-		t.Fatalf("empty optional value Unmarshal json is not nil, %s", err)
+		t.Fatalf("empty optional value UnmarshalJSON err is not nil, %s", err)
 	}
 
 	value, ok := emptyOptional.Get()
 
 	if value != 1 {
-		t.Fatalf("after Unmarshal receive invalid value, %d", value)
+		t.Fatalf("after UnmarshalJSON receive invalid value, %d", value)
 	}
 
 	if !ok {
-		t.Fatal("after Unmarshal ok is false")
+		t.Fatal("after UnmarshalJSON ok is false")
 	}
 
 	valueOptional := optional.Comparable(100)
@@ -190,17 +191,33 @@ func Test_Optional_UnmarshalJSON(t *testing.T) {
 	err = valueOptional.UnmarshalJSON([]byte{'1'})
 
 	if err != nil {
-		t.Fatalf("empty optional value Unmarshal json is not nil, %s", err)
+		t.Fatalf("empty optional value UnmarshalJSON json is not nil, %s", err)
 	}
 
 	value, ok = valueOptional.Get()
 
 	if value != 1 {
-		t.Fatalf("after Unmarshal receive invalid value, %d", value)
+		t.Fatalf("after UnmarshalJSON receive invalid value, %d", value)
 	}
 
 	if !ok {
-		t.Fatal("after Unmarshal ok is false")
+		t.Fatal("after UnmarshalJSON ok is false")
+	}
+}
+
+func Test_Optional_Marshal_OmitZero(t *testing.T) {
+	omitZeroStruct := struct {
+		Value optional.Optional[int] `json:"value,omitzero"`
+	}{}
+
+	data, err := json.Marshal(omitZeroStruct)
+
+	if err != nil {
+		t.Fatalf("failed marshal omit zero struct, %s", err)
+	}
+
+	if !slices.Equal(data, []byte(`{"value":null}`)) {
+		t.Fatalf("omit zero marshal invalid data, %s", string(data))
 	}
 }
 

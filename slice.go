@@ -92,6 +92,10 @@ func (s SliceOptional[T]) IsEmpty() bool {
 	return !s.ok
 }
 
+func (s SliceOptional[T]) IsZero() bool {
+	return !s.ok
+}
+
 func (o *SliceOptional[T]) Scan(src any) error {
 	value := make([]T, 0)
 

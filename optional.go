@@ -4,69 +4,72 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
-	"errors"
 )
 
-type Optional[T any] struct {
+type Optional[T comparable] struct {
 	value T
 	ok    bool
 }
 
-func Value[T any](v T) Optional[T] {
+func Empty[T comparable]() Optional[T] {
+	return Optional[T]{}
+}
+
+func Comparable[T comparable](v T) Optional[T] {
 	return Optional[T]{
 		value: v,
 		ok:    true,
 	}
 }
 
-func Empty[T any]() Optional[T] {
-	return Optional[T]{}
+func OmitZero[T comparable](v T) Optional[T] {
+	var zeroValue T
+
+	if v == zeroValue {
+		return Empty[T]()
+	}
+
+	return Comparable(v)
 }
 
-func Pointer[T any](p *T) Optional[T] {
+func Pointer[T comparable](p *T) Optional[T] {
 	if p == nil {
 		return Empty[T]()
 	}
 
-	return Value(*p)
-}
-
-func OmitZero[T comparable](v T) Optional[T] {
-	var empty T
-
-	if v == empty {
-		return Empty[T]()
-	}
-
-	return Value(v)
+	return Comparable(*p)
 }
 
 func (o Optional[T]) Get() (T, bool) {
 	return o.value, o.ok
 }
 
-var ErrOptionalValueIsEmpty = errors.New("optional value is empty")
-
 func (o Optional[T]) MustGet() T {
-	if o.ok {
-		return o.value
+	if !o.ok {
+		panic(ErrOptionalValueIsEmpty)
 	}
 
-	panic(ErrOptionalValueIsEmpty)
+	return o.value
 }
 
-func (o Optional[T]) IsEmpty() bool {
-	return !o.ok
+func (o Optional[T]) OmitZero() Optional[T] {
+	var zeroValue T
+
+	o.ok = o.value != zeroValue
+
+	return o
 }
 
 func (o Optional[T]) Pointer() *T {
 	if o.ok {
-		value := o.value
-
-		return &value
+		return &o.value
 	}
 
 	return nil
+}
+
+func (o Optional[T]) IsEmpty() bool {
+	return !o.ok
 }
 
 func (o Optional[T]) sqlNull() sql.Null[T] {
@@ -88,8 +91,10 @@ func (o *Optional[T]) Scan(src any) error {
 		return err
 	}
 
-	o.value = sqlNull.V
-	o.ok = sqlNull.Valid
+	*o = Optional[T]{
+		value: sqlNull.V,
+		ok:    sqlNull.Valid,
+	}
 
 	return nil
 }
@@ -118,7 +123,7 @@ func (o *Optional[T]) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	*o = Value(v)
+	*o = Comparable(v)
 
 	return nil
 }

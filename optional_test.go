@@ -39,10 +39,10 @@ func Test_Optional_Empty(t *testing.T) {
 	}
 }
 
-func Test_Optional_Value(t *testing.T) {
+func Test_Optional_Comparable(t *testing.T) {
 	const initial = 100
 
-	valueOptional := optional.Value(initial)
+	valueOptional := optional.Comparable(initial)
 
 	value, ok := valueOptional.Get()
 
@@ -82,6 +82,18 @@ func Test_Optional_Value(t *testing.T) {
 	if i != initial {
 		t.Fatalf("value optional is not equal initial, %d", i)
 	}
+
+	zeroValueOptional := optional.Comparable(0)
+
+	value, ok = zeroValueOptional.Get()
+
+	if !ok {
+		t.Fatal("zero value optional is zero")
+	}
+
+	if value != 0 {
+		t.Fatalf("zero value optional value wrong value, %d", value)
+	}
 }
 
 func Test_Optional_Empty_Scan(t *testing.T) {
@@ -109,7 +121,7 @@ func Test_Optional_Empty_Scan(t *testing.T) {
 func Test_Optional_Value_Scan(t *testing.T) {
 	scanValue := 100
 
-	valueOptional := optional.Value(1010)
+	valueOptional := optional.Comparable(1010)
 
 	err := valueOptional.Scan(scanValue)
 
@@ -141,7 +153,7 @@ func Test_Optional_MarshalJSON(t *testing.T) {
 		t.Fatalf("empty optional MarshalJSON() wrong data, %s", string(data))
 	}
 
-	valueOptional := optional.Value(100)
+	valueOptional := optional.Comparable(100)
 
 	data, err = valueOptional.MarshalJSON()
 
@@ -173,7 +185,7 @@ func Test_Optional_UnmarshalJSON(t *testing.T) {
 		t.Fatal("after Unmarshal ok is false")
 	}
 
-	valueOptional := optional.Value(100)
+	valueOptional := optional.Comparable(100)
 
 	err = valueOptional.UnmarshalJSON([]byte{'1'})
 
@@ -189,5 +201,31 @@ func Test_Optional_UnmarshalJSON(t *testing.T) {
 
 	if !ok {
 		t.Fatal("after Unmarshal ok is false")
+	}
+}
+
+func Test_Optional_OmitZero(t *testing.T) {
+	omitZeroOptional := optional.OmitZero(0)
+
+	value, ok := omitZeroOptional.Get()
+
+	if ok {
+		t.Fatal("omit zero optional not omitted")
+	}
+
+	if value != 0 {
+		t.Fatalf("omit zer optional invalid value, %d", value)
+	}
+
+	valueOptional := optional.Comparable(0).OmitZero()
+
+	value, ok = valueOptional.Get()
+
+	if ok {
+		t.Fatal("omit zero optional not omitted")
+	}
+
+	if value != 0 {
+		t.Fatalf("omit zer optional invalid value, %d", value)
 	}
 }

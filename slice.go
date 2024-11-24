@@ -23,13 +23,6 @@ func Slice[T any](value []T) SliceOptional[T] {
 	}
 }
 
-func SliceOmitZero[T any](value []T) SliceOptional[T] {
-	return SliceOptional[T]{
-		value: value,
-		ok:    len(value) > 0,
-	}
-}
-
 func SlicePointer[T any](value *[]T) SliceOptional[T] {
 	if value == nil {
 		return SliceEmpty[T]()

@@ -258,21 +258,9 @@ func Test_Optional_Marshal_OmitZero(t *testing.T) {
 }
 
 func Test_Optional_OmitZero(t *testing.T) {
-	omitZeroOptional := optional.OmitZero(0)
-
-	value, ok := omitZeroOptional.Get()
-
-	if ok {
-		t.Fatal("omit zero optional not omitted")
-	}
-
-	if value != 0 {
-		t.Fatalf("omit zer optional invalid value, %d", value)
-	}
-
 	valueOptional := optional.Comparable(0).OmitZero()
 
-	value, ok = valueOptional.Get()
+	value, ok := valueOptional.Get()
 
 	if ok {
 		t.Fatal("omit zero optional not omitted")

@@ -22,16 +22,6 @@ func Comparable[T comparable](v T) Optional[T] {
 	}
 }
 
-func OmitZero[T comparable](v T) Optional[T] {
-	var zeroValue T
-
-	if v == zeroValue {
-		return Empty[T]()
-	}
-
-	return Comparable(v)
-}
-
 func Pointer[T comparable](p *T) Optional[T] {
 	if p == nil {
 		return Empty[T]()

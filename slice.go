@@ -55,23 +55,21 @@ func (s SliceOptional[T]) GetCopy() ([]T, bool) {
 }
 
 func (s SliceOptional[T]) MustGet() []T {
-	if !s.ok {
+	v, ok := s.Get()
+	if !ok {
 		panic(ErrOptionalValueIsEmpty)
 	}
 
-	return s.value
+	return v
 }
 
 func (s SliceOptional[T]) MustGetCopy() []T {
-	if !s.ok {
+	v, ok := s.GetCopy()
+	if !ok {
 		panic(ErrOptionalValueIsEmpty)
 	}
 
-	dst := make([]T, 0, len(s.value))
-
-	copy(dst, s.value)
-
-	return dst
+	return v
 }
 
 func (s SliceOptional[T]) OmitZero() SliceOptional[T] {

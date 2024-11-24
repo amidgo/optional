@@ -45,11 +45,12 @@ func (o Optional[T]) Get() (T, bool) {
 }
 
 func (o Optional[T]) MustGet() T {
-	if !o.ok {
+	v, ok := o.Get()
+	if !ok {
 		panic(ErrOptionalValueIsEmpty)
 	}
 
-	return o.value
+	return v
 }
 
 func (o Optional[T]) OmitZero() Optional[T] {

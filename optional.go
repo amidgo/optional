@@ -140,3 +140,12 @@ func OmitZeroMap[K comparable, V any](op Optional[map[K]V]) Optional[map[K]V] {
 
 	return op
 }
+
+func Map[T, O any](op Optional[T], f func(T) O) Optional[O] {
+	v, ok := op.Get()
+	if !ok {
+		return Optional[O]{}
+	}
+
+	return New(f(v))
+}

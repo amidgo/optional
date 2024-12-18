@@ -6,19 +6,19 @@ import (
 	"encoding/json"
 )
 
-type Optional[T comparable] struct {
+type Optional[T any] struct {
 	value T
 	ok    bool
 }
 
-func New[T comparable](v T) Optional[T] {
+func New[T any](v T) Optional[T] {
 	return Optional[T]{
 		value: v,
 		ok:    true,
 	}
 }
 
-func Pointer[T comparable](p *T) Optional[T] {
+func FromPointer[T comparable](p *T) Optional[T] {
 	if p == nil {
 		return Optional[T]{}
 	}
@@ -37,14 +37,6 @@ func (o Optional[T]) MustGet() T {
 	}
 
 	return v
-}
-
-func (o Optional[T]) OmitZero() Optional[T] {
-	var zeroValue T
-
-	o.ok = o.value != zeroValue
-
-	return o
 }
 
 func (o Optional[T]) Pointer() *T {
@@ -117,4 +109,34 @@ func (o *Optional[T]) UnmarshalJSON(data []byte) error {
 	*o = New(v)
 
 	return nil
+}
+
+func OmitZero[T comparable](op Optional[T]) Optional[T] {
+	var zeroValue T
+
+	op.ok = op.value != zeroValue
+
+	return op
+}
+
+func OmitZeroSlice[T any](op Optional[[]T]) Optional[[]T] {
+	v, ok := op.Get()
+	if !ok {
+		return op
+	}
+
+	op.ok = len(v) != 0
+
+	return op
+}
+
+func OmitZeroMap[K comparable, V any](op Optional[map[K]V]) Optional[map[K]V] {
+	v, ok := op.Get()
+	if !ok {
+		return op
+	}
+
+	op.ok = len(v) != 0
+
+	return op
 }

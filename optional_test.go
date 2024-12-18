@@ -258,7 +258,7 @@ func Test_Optional_Marshal_OmitZero(t *testing.T) {
 }
 
 func Test_Optional_OmitZero(t *testing.T) {
-	valueOptional := optional.New(0).OmitZero()
+	valueOptional := optional.OmitZero(optional.New(0))
 
 	value, ok := valueOptional.Get()
 

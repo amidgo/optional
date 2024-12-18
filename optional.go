@@ -11,11 +11,7 @@ type Optional[T comparable] struct {
 	ok    bool
 }
 
-func Empty[T comparable]() Optional[T] {
-	return Optional[T]{}
-}
-
-func Comparable[T comparable](v T) Optional[T] {
+func New[T comparable](v T) Optional[T] {
 	return Optional[T]{
 		value: v,
 		ok:    true,
@@ -24,10 +20,10 @@ func Comparable[T comparable](v T) Optional[T] {
 
 func Pointer[T comparable](p *T) Optional[T] {
 	if p == nil {
-		return Empty[T]()
+		return Optional[T]{}
 	}
 
-	return Comparable(*p)
+	return New(*p)
 }
 
 func (o Optional[T]) Get() (T, bool) {
@@ -106,7 +102,7 @@ func (o Optional[T]) MarshalJSON() ([]byte, error) {
 
 func (o *Optional[T]) UnmarshalJSON(data []byte) error {
 	if len(data) == 4 && [4]byte(data) == jsonNull {
-		*o = Empty[T]()
+		*o = Optional[T]{}
 
 		return nil
 	}
@@ -118,7 +114,7 @@ func (o *Optional[T]) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	*o = Comparable(v)
+	*o = New(v)
 
 	return nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func Test_Optional_Empty(t *testing.T) {
-	emptyOptional := optional.Empty[int]()
+	emptyOptional := optional.Optional[int]{}
 
 	value, ok := emptyOptional.Get()
 
@@ -43,7 +43,7 @@ func Test_Optional_Empty(t *testing.T) {
 func Test_Optional_Comparable(t *testing.T) {
 	const initial = 100
 
-	valueOptional := optional.Comparable(initial)
+	valueOptional := optional.New(initial)
 
 	value, ok := valueOptional.Get()
 
@@ -84,7 +84,7 @@ func Test_Optional_Comparable(t *testing.T) {
 		t.Fatalf("value optional is not equal initial, %d", i)
 	}
 
-	zeroValueOptional := optional.Comparable(0)
+	zeroValueOptional := optional.New(0)
 
 	value, ok = zeroValueOptional.Get()
 
@@ -100,7 +100,7 @@ func Test_Optional_Comparable(t *testing.T) {
 func Test_Optional_Empty_Scan(t *testing.T) {
 	scanValue := 100
 
-	emptyOptional := optional.Empty[int]()
+	emptyOptional := optional.Optional[int]{}
 
 	err := emptyOptional.Scan(scanValue)
 
@@ -118,7 +118,7 @@ func Test_Optional_Empty_Scan(t *testing.T) {
 		t.Fatalf("scan not affected optional")
 	}
 
-	emptyOptional = optional.Empty[int]()
+	emptyOptional = optional.Optional[int]{}
 
 	err = emptyOptional.Scan("Hello World!")
 
@@ -140,7 +140,7 @@ func Test_Optional_Empty_Scan(t *testing.T) {
 func Test_Optional_Value_Scan(t *testing.T) {
 	scanValue := 100
 
-	valueOptional := optional.Comparable(1010)
+	valueOptional := optional.New(1010)
 
 	err := valueOptional.Scan(scanValue)
 
@@ -158,7 +158,7 @@ func Test_Optional_Value_Scan(t *testing.T) {
 		t.Fatalf("scan not affected optional")
 	}
 
-	valueOptional = optional.Comparable(1010)
+	valueOptional = optional.New(1010)
 
 	err = valueOptional.Scan("Hello World!")
 
@@ -178,7 +178,7 @@ func Test_Optional_Value_Scan(t *testing.T) {
 }
 
 func Test_Optional_MarshalJSON(t *testing.T) {
-	emptyOptional := optional.Empty[int]()
+	emptyOptional := optional.Optional[int]{}
 
 	data, err := emptyOptional.MarshalJSON()
 
@@ -190,7 +190,7 @@ func Test_Optional_MarshalJSON(t *testing.T) {
 		t.Fatalf("empty optional MarshalJSON wrong data, %s", string(data))
 	}
 
-	valueOptional := optional.Comparable(100)
+	valueOptional := optional.New(100)
 
 	data, err = valueOptional.MarshalJSON()
 
@@ -204,7 +204,7 @@ func Test_Optional_MarshalJSON(t *testing.T) {
 }
 
 func Test_Optional_UnmarshalJSON(t *testing.T) {
-	emptyOptional := optional.Empty[int]()
+	emptyOptional := optional.Optional[int]{}
 
 	err := emptyOptional.UnmarshalJSON([]byte{'1'})
 
@@ -222,7 +222,7 @@ func Test_Optional_UnmarshalJSON(t *testing.T) {
 		t.Fatal("after UnmarshalJSON ok is false")
 	}
 
-	valueOptional := optional.Comparable(100)
+	valueOptional := optional.New(100)
 
 	err = valueOptional.UnmarshalJSON([]byte{'1'})
 
@@ -258,7 +258,7 @@ func Test_Optional_Marshal_OmitZero(t *testing.T) {
 }
 
 func Test_Optional_OmitZero(t *testing.T) {
-	valueOptional := optional.Comparable(0).OmitZero()
+	valueOptional := optional.New(0).OmitZero()
 
 	value, ok := valueOptional.Get()
 

@@ -119,7 +119,7 @@ func OmitZero[T comparable](op Optional[T]) Optional[T] {
 	return op
 }
 
-func Map[T, O any](op Optional[T], f func(T) O) Optional[O] {
+func Convert[T, O any](op Optional[T], f func(T) O) Optional[O] {
 	v, ok := op.Get()
 	if !ok {
 		return Optional[O]{}

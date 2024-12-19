@@ -2,6 +2,7 @@ package optional_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 	"testing"
 
@@ -268,5 +269,53 @@ func Test_Optional_OmitZero(t *testing.T) {
 
 	if value != 0 {
 		t.Fatalf("omit zer optional invalid value, %d", value)
+	}
+}
+
+func Test_Optional_Pointer(t *testing.T) {
+	pointerOptional := optional.Pointer((*int)(nil))
+
+	_, ok := pointerOptional.Get()
+	if ok {
+		t.Fatal("nil pointer optional must be empty")
+	}
+
+	i := 1
+
+	pointerOptional = optional.Pointer(&i)
+
+	value, ok := pointerOptional.Get()
+	if !ok {
+		t.Fatal("non nil pointer optional must not empty")
+	}
+
+	if value != i {
+		t.Fatalf("non nil pointer optional value not equat, expected %d, actual %d", i, value)
+	}
+}
+
+func Test_Optional_Convert(t *testing.T) {
+	intOpt := optional.New(1)
+
+	cf := func(i int) string { return fmt.Sprint(i) }
+
+	stringOpt := optional.Convert(intOpt, cf)
+
+	value, ok := stringOpt.Get()
+	if !ok {
+		t.Fatal("not empty optional after convert should not be empty")
+	}
+
+	if value != "1" {
+		t.Fatalf("convert optional value not equal, expected %s, actual %s", "1", value)
+	}
+
+	emptyOpt := optional.Optional[int]{}
+
+	emptyStringOpt := optional.Convert(emptyOpt, cf)
+
+	value, ok = emptyStringOpt.Get()
+	if ok {
+		t.Fatal("nil optional after convert must be nil")
 	}
 }

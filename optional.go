@@ -18,7 +18,7 @@ func New[T any](v T) Optional[T] {
 	}
 }
 
-func FromPointer[T comparable](p *T) Optional[T] {
+func Pointer[T comparable](p *T) Optional[T] {
 	if p == nil {
 		return Optional[T]{}
 	}
@@ -115,28 +115,6 @@ func OmitZero[T comparable](op Optional[T]) Optional[T] {
 	var zeroValue T
 
 	op.ok = op.value != zeroValue
-
-	return op
-}
-
-func OmitZeroSlice[T any](op Optional[[]T]) Optional[[]T] {
-	v, ok := op.Get()
-	if !ok {
-		return op
-	}
-
-	op.ok = len(v) != 0
-
-	return op
-}
-
-func OmitZeroMap[K comparable, V any](op Optional[map[K]V]) Optional[map[K]V] {
-	v, ok := op.Get()
-	if !ok {
-		return op
-	}
-
-	op.ok = len(v) != 0
 
 	return op
 }

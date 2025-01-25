@@ -18,7 +18,7 @@ func New[T any](v T) Optional[T] {
 	}
 }
 
-func Pointer[T comparable](p *T) Optional[T] {
+func Pointer[T any](p *T) Optional[T] {
 	if p == nil {
 		return Optional[T]{}
 	}

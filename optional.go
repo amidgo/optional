@@ -47,10 +47,6 @@ func (o Optional[T]) Pointer() *T {
 	return nil
 }
 
-func (o Optional[T]) IsEmpty() bool {
-	return !o.ok
-}
-
 func (o Optional[T]) IsZero() bool {
 	return !o.ok
 }
@@ -85,7 +81,7 @@ func (o *Optional[T]) Scan(src any) error {
 var jsonNull = [4]byte{'n', 'u', 'l', 'l'}
 
 func (o Optional[T]) MarshalJSON() ([]byte, error) {
-	if o.IsEmpty() {
+	if o.IsZero() {
 		return jsonNull[:], nil
 	}
 

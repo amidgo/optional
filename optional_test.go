@@ -22,7 +22,7 @@ func Test_Optional_Empty(t *testing.T) {
 		t.Fatalf("wrong ok of empty optional, %d", value)
 	}
 
-	if !emptyOptional.IsEmpty() {
+	if !emptyOptional.IsZero() {
 		t.Fatal("empty optional is not empty")
 	}
 
@@ -56,7 +56,7 @@ func Test_Optional_Comparable(t *testing.T) {
 		t.Fatal("value optional wrong ok")
 	}
 
-	if valueOptional.IsEmpty() {
+	if valueOptional.IsZero() {
 		t.Fatal("value optional is empty")
 	}
 

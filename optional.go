@@ -4,11 +4,37 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
+)
+
+var ErrOptionalValueIsEmpty = errors.New("optional value is empty")
+
+type (
+	Byte = Optional[byte]
+
+	Uint   = Optional[uint]
+	Uint8  = Optional[uint8]
+	Uint16 = Optional[uint16]
+	Uint32 = Optional[uint32]
+	Uint64 = Optional[uint64]
+
+	Int   = Optional[int]
+	Int8  = Optional[int8]
+	Int16 = Optional[int16]
+	Int32 = Optional[int32]
+	Int64 = Optional[int64]
+
+	Bool = Optional[bool]
+
+	String = Optional[string]
+
+	Float32 = Optional[float32]
+	Float64 = Optional[float64]
 )
 
 type Optional[T any] struct {
-	value T
 	ok    bool
+	value T
 }
 
 func New[T any](v T) Optional[T] {

@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 var ErrOptionalValueIsEmpty = errors.New("optional value is empty")
@@ -30,6 +31,8 @@ type (
 
 	Float32 = Optional[float32]
 	Float64 = Optional[float64]
+
+	Time = Optional[time.Time]
 )
 
 type Optional[T any] struct {

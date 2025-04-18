@@ -42,7 +42,7 @@ func Test_Optional_Empty(t *testing.T) {
 }
 
 func Test_Optional_Comparable(t *testing.T) {
-	const initial = 100
+	const initial int64 = 100
 
 	valueOptional := optional.New(initial)
 
@@ -76,7 +76,7 @@ func Test_Optional_Comparable(t *testing.T) {
 		t.Fatalf("value optional Value err not nil, %s", err)
 	}
 
-	i, ok := driverValue.(int)
+	i, ok := driverValue.(int64)
 	if !ok {
 		t.Fatalf("invalid type of driverValue, %T", driverValue)
 	}
@@ -85,7 +85,7 @@ func Test_Optional_Comparable(t *testing.T) {
 		t.Fatalf("value optional is not equal initial, %d", i)
 	}
 
-	zeroValueOptional := optional.New(0)
+	zeroValueOptional := optional.New(int64(0))
 
 	value, ok = zeroValueOptional.Get()
 
@@ -253,7 +253,7 @@ func Test_Optional_Marshal_OmitZero(t *testing.T) {
 		t.Fatalf("failed marshal omit zero struct, %s", err)
 	}
 
-	if !slices.Equal(data, []byte(`{"value":null}`)) {
+	if !slices.Equal(data, []byte(`{}`)) {
 		t.Fatalf("omit zero marshal invalid data, %s", string(data))
 	}
 }
